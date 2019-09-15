@@ -5,8 +5,11 @@ scalar DateTime @scalar(class: "Nuwave\\Lighthouse\\Schema\\Types\\Scalars\\Date
 scalar Date @scalar(class: "Nuwave\\Lighthouse\\Schema\\Types\\Scalars\\Date")
 
 type Query {
+    hello: String!
+    greet(name: String!): String
     users: [User!]! @paginate(type: "paginator" model: "App\\User")
     user(id: ID @eq): User @find(model: "App\\User")
+    allusers: [User!]! @all 
 }
 
 type User {
@@ -15,4 +18,23 @@ type User {
     email: String!
     created_at: DateTime!
     updated_at: DateTime!
+}
+
+
+type Mutation {
+    createUser(
+        name: String! @rules(apply: ["required", "min:2"]),
+        email: String! @rules(apply: ["email", "unique:users"]),
+        password: String! @rules(apply: ["min: 4"]) @bcrypt
+    ): User! @create
+
+
+    updateUser(
+        id: ID!,
+        name: String! @rules(apply: ["required", "min:2"]),
+        email: String! @rules(apply: ["email", "unique:users"]),
+        password: String! @rules(apply: ["min: 4"]) @bcrypt
+    ): User! @update
+
+    deleteUser(id: ID!): User! @delete
 }
