@@ -10,6 +10,12 @@ type Query {
     users: [User!]! @paginate(type: "paginator" model: "App\\User")
     user(id: ID @eq): User @find(model: "App\\User")
     allusers: [User!]! @all 
+
+    posts: [Post!]! @paginate(type: "paginator" model: "App\\Post")
+    post(id: ID @eq): Post @find(model: "App\\Post")
+
+    comments: [Comment!]! @paginate(type: "paginator" model: "App\\Comment")
+    comment(id: ID @eq): Comment @find(model: "App\\Comment")
 }
 
 type User {
@@ -20,8 +26,22 @@ type User {
     updated_at: DateTime!
 }
 
+type Post {
+    id: ID!
+    title: String!
+    content: String!
+    author: User! @belongsTo
+    comments: [Comment] @hasMany
+}
+
+type Comment {
+    id: ID!
+    reply: String!
+}
+
 
 type Mutation {
+    # User
     createUser(
         name: String! @rules(apply: ["required", "min:2"]),
         email: String! @rules(apply: ["email", "unique:users"]),
@@ -37,4 +57,18 @@ type Mutation {
     ): User! @update
 
     deleteUser(id: ID!): User! @delete
+
+    # Post
+    createPost(
+        user_id: Int!, 
+        title: String! @rules(apply: ["required", "min:4", "max:50"]),
+        content: String! @rules(apply: ["required", "min:4", "max:300"])
+    ): Post! @create
+
+    # Comment
+    createComment(
+        post_id: Int!, 
+        reply: String! @rules(apply: ["required", "min:4", "max:100"])
+    ): Comment! @create
 }
+
