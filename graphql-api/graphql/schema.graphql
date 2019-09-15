@@ -14,7 +14,6 @@ type Query {
     posts: [Post!]! @paginate(type: "paginator" model: "App\\Post")
     post(id: ID @eq): Post @find(model: "App\\Post")
 
-    comments: [Comment!]! @paginate(type: "paginator" model: "App\\Comment")
     comment(id: ID @eq): Comment @find(model: "App\\Comment")
 }
 
